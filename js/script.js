@@ -1,60 +1,23 @@
 console.log("script.js loaded");
 
-// let data = fetch("https://dogapi.dog/api/facts");
-// console.log(data);
+const gifContainer = document.querySelector("#gif-container"); // links with the output div in index.html
+const button = document.querySelector("#fetch-gif-btn"); // links with the button in index.html
+let imageUrls = []; // array to hold the gif urls
 
+async function getGif(){
+    let endpoint = "https://api.giphy.com/v1/gifs/search?api_key=8Daqf5MnR1AMZVZgTqcdHtxRHmZDkLNK&q=cat&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips";
+    const response = await fetch(endpoint);
+    const json = await response.json();
+    imageUrls = json.data.map(gif => gif.images.original.url); // pull out just the URLs
+    console.log(imageUrls);
+}
 
+button.addEventListener("click", async function() {   
+    await getGif(); // wait for the data before displaying
+    gifContainer.innerHTML = ""; // clear old GIFs so clicks don't stack
 
-
-// async function getDogFact() {
-//   const response = await fetch("https://dogapi.dog/api/facts");
-//   const data = await response.json();
-//   const fact = data.facts[0];
-  
-//   // Update the DOM with the dog fact
-//   const output = document.getElementById("dog-fact-output"); 
-//   output.textContent = fact;
-// }
-
-// getDogFact()
-
-// // getDogFact() code not shown
-// const button = document.getElementById("fetch-dog-btn"); 
-
-// button.addEventListener("click", function () { 
-//   getDogFact(); 
-// });
-
-
-
-// function getDogFact() {
-//   fetch("https://dogapi.dog/api/facts")
-//     .then(response => response.json())  // Convert the response
-//     .then(data => {
-//       // Update the DOM with the dog fact
-//       const fact = data.facts[0];
-//       const output = document.getElementById("fact-output");
-//       output.textContent = fact;
-//     })
-//     .catch(error => {
-//       // Message to print if there was an error
-//       console.error("Error fetching dog fact:", error);
-//     });
-// }
-
-// // Same button code as async/await
-// const button = document.getElementById("fetch-dog-btn");
-
-// button.addEventListener("click", function () {
-//   getDogFact();
-// });
-
-
-
-
-let endpoint = "https://api.giphy.com/v1/gifs/search?api_key=8Daqf5MnR1AMZVZgTqcdHtxRHmZDkLNK&q=cat&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips";
-
-
-
-
-
+    // loops through the array of URLs and adds them to the DOM
+    for (let i = 0; i < imageUrls.length; i++) {
+        gifContainer.innerHTML += `<img src="${imageUrls[i]}" class="col-3 mb-3">`;
+    }
+});
